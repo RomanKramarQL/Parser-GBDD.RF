@@ -1,0 +1,8 @@
+fastapi
+opencv-python
+easyocr
+numpy
+selenium
+uvicorn
+requests
+python-telegram-bot
