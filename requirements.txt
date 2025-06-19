@@ -5,4 +5,4 @@ numpy
 selenium
 uvicorn
 requests
-python-telegram-bot
+telebot
