@@ -13,6 +13,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 import time
+from config import ISSUE_DATE
 
 # Файлы для хранения списков
 BLACKLIST_FILE = 'blacklist.json'
@@ -121,7 +122,7 @@ def process_page_content(content):
 
 def check_driver_license(issue_date, max_attempts=10):
     options = webdriver.ChromeOptions()
-    # options.add_argument('--headless')
+    options.add_argument('--headless')
     options.add_argument('--disable-gpu')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
@@ -147,7 +148,7 @@ def check_driver_license(issue_date, max_attempts=10):
             # Ввод данных
             num_input = driver.find_element(By.ID, 'checkDriverNum')
             num_input.clear()
-            num_input.send_keys('99 18 151233')
+            num_input.send_keys(license_number)
             time.sleep(2)
 
             date_input = driver.find_element(By.ID, 'checkDriverDate')
@@ -289,5 +290,4 @@ def check_driver_license(issue_date, max_attempts=10):
 
 
 if __name__ == "__main__":
-    issue_date = "25.11.2020"  # Укажите нужную дату выдачи
-    check_driver_license(issue_date)
+    check_driver_license(ISSUE_DATE)
