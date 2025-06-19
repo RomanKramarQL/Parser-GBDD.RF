@@ -1,19 +1,43 @@
-from telegram import Update
-from telegram.ext import Application, CommandHandler, MessageHandler, filters
-import requests
+import telebot
 
-TOKEN = "ТВОЙ_ТОКЕН"
-API_URL = "http://IP_ТВОЕГО_СЕРВЕРА:8000/check_driver/"
+from config import TOKEN
 
-async def handle_message(update: Update, context):
-    text = update.message.text
+bot = telebot.TeleBot(TOKEN)
+
+
+@bot.message_handler(commands=['start'])
+def handle_start(message):
+    """Обработчик команды /start"""
+    welcome_text = (
+        "Привет! Я бот для работы с whitelist/blacklist.\n"
+        "Доступные команды:\n"
+        "/start - показать это сообщение\n"
+        "/get_whitelist - получить файл whitelist.json\n"
+        "/get_blacklist - получить файл blacklist.json"
+    )
+    bot.reply_to(message, welcome_text)
+
+
+@bot.message_handler(commands=['get_whitelist'])
+def handle_get_whitelist(message):
+    """Отправить файл whitelist.json"""
     try:
-        series, date = text.split()  # Пример: "123456 2020-01-01"
-        response = requests.get(f"{API_URL}?series={series}&date={date}").json()
-        await update.message.reply_text(str(response))
-    except:
-        await update.message.reply_text("Ошибка. Введи серию и дату через пробел.")
+        with open('whitelist.json', 'rb') as f:
+            bot.send_document(message.chat.id, f)
+    except FileNotFoundError:
+        bot.reply_to(message, "Файл whitelist.json не найден")
 
-app = Application.builder().token(TOKEN).build()
-app.add_handler(MessageHandler(filters.TEXT, handle_message))
-app.run_polling()
+
+@bot.message_handler(commands=['get_blacklist'])
+def handle_get_whitelist(message):
+    """Отправить файл blacklist.json"""
+    try:
+        with open('blacklist.json', 'rb') as f:
+            bot.send_document(message.chat.id, f)
+    except FileNotFoundError:
+        bot.reply_to(message, "Файл blacklist.json не найден")
+
+
+if __name__ == '__main__':
+    print("Бот запущен...")
+    bot.polling(none_stop=True)
